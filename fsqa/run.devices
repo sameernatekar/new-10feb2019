@@ -1,0 +1,300 @@
+# $Id: run.devices,v 4.22 2013/08/27 13:41:31 single Exp $
+#ident	"@(#)vxfs:$RCSfile: run.devices,v $	$Revision: 4.22 $"
+
+#
+# VT50-2000-2016-84-28-4
+# $Copyright: Copyright (c) 2016 Veritas Technologies LLC.
+# All rights reserved.
+#
+# THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+# VERITAS TECHNOLOGIES LLC.  USE, DISCLOSURE OR REPRODUCTION IS PROHIBITED
+# WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF VERITAS TECHNOLOGIES LLC.
+#
+# The  Licensed  Software  and  Documentation  are  deemed  to be commercial
+# computer  software  as  defined  in  FAR  12.212 and subject to restricted
+# rights  as  defined in FAR Section 52.227-19 "Commercial Computer Software
+# - Restricted  Rights"  and  DFARS 227.7202,  et seq.  "Commercial Computer
+# Software  and  Commercial Computer Software Documentation," as applicable,
+# and any successor regulations, whether delivered by Veritas as on premises
+# or  hosted  services.  Any  use,  modification,  reproduction  release,
+# performance,  display  or  disclosure  of  the  Licensed  Software  and
+# Documentation by the U.S. Government shall be solely in accordance with
+# the terms of this Agreement. $
+#
+
+#
+# The vxfs test suite device configuration file.
+#
+# Devices to be used in the test suite are configured by setting up the
+# list in DEVLIST.  DEVLIST is a space separated list of
+# <device>,<size>,<mountpoint> triplets.  The entire pool of devices
+# allocated for the tests should be specified here.  Tests will mount
+# and umount these devices as needed.
+#
+# A complete set of library routines are provided in the _scripts_lib
+# library that allows shell scripts to get all the necessary information
+# about the configured devices, sizes and mountpoints.
+#
+# Note the style of making additions to the list.  This makes editing the
+# list easier.
+#
+# DO NOT use mountpoints that are not in the root directory.
+# DO NOT use mountpoint names with "." in them.
+#
+
+DEVLIST=
+DEVLIST="$DEVLIST /dev/vx/rdsk/testdg/vol1,62914560,/mnt1"
+DEVLIST="$DEVLIST /dev/vx/rdsk/testdg/vol2,62914560,/mnt2"
+DEVLIST="$DEVLIST /dev/vx/rdsk/testdg/vol3,62914560,/mnt3"
+
+#
+# RAWDEV1 and RAWDEV2 are used for testing of fsfreeze command.
+# Non veritas volume character devices should be specified for them.
+# Example: RAWDEV2="/dev/sdb1", a partition needs to be specified,
+# A vxfs file system should be able to be setup on this partiion.
+#
+
+RAWDEV1=
+RAWDEV2=
+
+#
+# For ODM Resilvering testing, set SMARTSYNC_DG to a valid and empty disk group
+#	SMARTSYNC_DG="rootdg"
+# The disk group specified should not contain any volumes. It should be
+# empty. The ODM Resilvering tests create volumes on the fly in the disk
+# group specified as and when required. The test suite creates a couple
+# of raid5, mirrored, striped, etc. types of volumes, and a bunch
+# of volume sets with different combinations of these volumes.
+#
+# For ODMQA conformance tests, if SMARTYSYNC_DG is left null, the tests
+# will be run on the volume/volumeset specified in the DEVLIST entry.
+#
+# Currently, tests using SMARTSYNC_DG use only the first disk in the disk
+# group, so it should be of reasonable size (23G for odmqa conformance).
+#
+# If the disk group specified contains any other volumes apriori, the 
+# test suite will fail to start, with an appropriate error message.
+#
+# For CFS (when NODELIST is set), it is required that the CVM master is
+# also available in NODELIST. Otherwise, the test suite will again fail
+# to start with an appropriate error message.
+
+export SMARTSYNC_DG=rootdg
+
+#
+# Devices to be used in the stress test suite for SMARTMOVE are configured by
+# setting up the list in SMDEVLIST. SMDEVLIST is a space separated list of
+# <device>,<new plex name>,<new mountpoint> triplets. The devices in
+# SMDEVLIST should be part of DEVLIST. Also, the additional plexes should
+# already have been created.
+#
+
+#SMDEVLIST=
+#SMDEVLIST="$SMDEVLIST /dev/vx/rdsk/rootdg/vol1,smplex,/sm_fsqamnt"
+
+#
+# For DST backup/restore API testing, set DSTAPI_DISK1,2 to
+# valid disks names. The API tests would re-create disk
+# groups and volumes on these disks
+#
+DSTAPI_DISK1=
+DSTAPI_DISK2=
+DSTAPI_DISK3=
+
+#
+# Specify the raw device(s) to use as file system caches below.
+#
+# For non-CFS, set it to the raw cachefs device/devices with comma as
+# seperator if there is more than one device.
+#
+#	CAFSDEVLIST=/dev/vx/rdsk/mydg/volname1,/dev/vx/rdsk/mydg/volname2
+#
+# For CFS, list node names and their raw cachefs devices with ':'
+# as a separator.
+# If node has multiple raw cachefs then use comma as seperator.
+# Not all nodes need a cachefs device or need to be listed.
+# If a node is listed without a cachefs device it's skipped.
+#
+#	CAFSDEVLIST=
+#	CAFSDEVLIST="$CAFSDEVLIST node1:rawdev1,rawdev2"
+#	CAFSDEVLIST="$CAFSDEVLIST node2:"
+#	CAFSDEVLIST="$CAFSDEVLIST node3:rawdev3,rawdev4"
+#
+# CAFSDEVSIZE is the size of the cachefs device in sectors.
+#
+# For cachefs stress CAFSSTRESS must also be set.
+#
+#
+#
+CAFSDEVLIST=
+CAFSDEVSIZE=
+#CAFSDEVLIST="$CAFSDEVLIST iax3950x6-v15:/dev/vx/rdsk/cdg/cvol"
+#CAFSDEVLIST="$CAFSDEVLIST iax3950x6-v18:/dev/vx/rdsk/cdg/cvol"
+#CAFSDEVLIST="$CAFSDEVLIST iax3950x6-v24:/dev/vx/rdsk/cdg/cvol"
+#CAFSDEVLIST="$CAFSDEVLIST iax3950x6-v26:/dev/vx/rdsk/cdg/cvol"
+#CAFSDEVSIZE=10485760
+
+
+
+#
+# Specify the raw device(s) to use as file system FEL device below.
+#
+# For non-CFS, set it to the raw FEL device/devices.
+#
+#       FELDEVLIST=/dev/vx/rdsk/mydg/volname1
+#
+# For CFS, list node names and their raw FEL devices with ':'
+# as a separator.
+
+#
+#       FELDEVLIST=
+#       FELDEVLIST="$FELDEVLIST node1:rawdev1"
+#       FELDEVLIST="$FELDEVLIST node2:rawdev2"
+#       FELDEVLIST="$FELDEVLIST node3:rawdev3"
+#
+# FELDEVSIZE is the size of the FEL device in sectors.
+#
+#
+#
+FELDEVLIST=
+FELDEVSIZE=
+
+
+
+#
+# Specify the raw device(s) to use to save intent log data below.
+#
+# Format is as shown below:
+#
+#	SAVELOGDEVLIST=
+#	SAVELOGDEVLIST="$SAVELOGDEVLIST rawdev1:size1:mntpt1"
+#	SAVELOGDEVLIST="$SAVELOGDEVLIST rawdev2:size2:mntpt2"
+#	SAVELOGDEVLIST="$SAVELOGDEVLIST rawdev3:size3:mntpt3"
+#
+# Few points to note:
+# 1. size is the size of the savelog device in sectors (for stress runs
+#    on non-vsets about 10GB should be enough to save all the transactions
+#    per cycle).
+# 2. mntpt refers to the mount point of the file system for which intent log is
+#    collected.
+# 3. In the case of CFS, same raw device must be available on each node for
+#    saving per node intent log data. For example in the below configuration
+#    /dev/loop0, /dev/loop1, /dev/loop2  needs to be available on all nodes in
+#    the cluster.
+#         SAVELOGDEVLIST="$SAVELOGDEVLIST /dev/loop0:20971520:/mnt0"
+#         SAVELOGDEVLIST="$SAVELOGDEVLIST /dev/loop1:20971520:/mnt1"
+#         SAVELOGDEVLIST="$SAVELOGDEVLIST /dev/loop2:20971520:/mnt2"
+#
+SAVELOGDEVLIST=
+#
+# Specify the raw device(s) to use as file system caches below.
+# Cachefs support limits the number of cachefs devices to just one per node.
+#
+# For non-CFS set it to the raw cachefs device:
+#       CAVMDEVLIST=/dev/vx/rdsk/mydg/volname
+#
+# For CFS list node names and their raw cachefs devices with ':' as a separator.
+# Not all nodes need a cachefs device or need to be listed.
+# If a node is listed without a cachefs device it's skipped.
+#       CAVMDEVLIST=
+#       CAVMDEVLIST="$CAVMDEVLIST node1:rawdev1"
+#       CAVMDEVLIST="$CAVMDEVLIST node2:"
+#       CAVMDEVLIST="$CAVMDEVLIST node3:rawdev3"
+#
+# For cachefs stress CAFSSTRESS must also be set.
+#
+
+CAVMDEVLIST=
+
+#
+# For CFS, set NODELIST to the nodes to be tested
+#       NODELIST="able baker charlie"
+# For VxFS (unclustered), leave NODELIST null or unset.
+# Currently, cluster mounts are used if NODELIST is non-null,
+# and local mounts otherwise.
+#
+
+NODELIST=""
+#NODELIST="iax3950x6-v15 iax3950x6-v18 iax3950x6-v24 iax3950x6-v26"
+
+#
+# For CFS, MOUNTLIST shows how nodes mount devices.
+#       MOUNTLIST="$MOUNTLIST /mnt0:cluster:nodes=able,baker:primary=able"
+# Currently MOUNTLIST is completely ignored.
+#
+
+MOUNTLIST=
+
+
+#
+# setting this variable makes the first node in the list to become
+# primary   for the given mount point
+#
+
+#CFS_FIXED_PRIMARY="true:takes the first node in MOUNTLIST for the given mntpt"
+
+#
+# For NFS test, NFS_SERVER must contain server name
+#
+
+#NFS_SERVER=lovejoy
+
+#
+# NFS_CLIENT_LIST must contain list of clients, server name for nfs
+# test mount and mnt point.
+# Do not put any ip address here. server name should be same
+# for all the entries and put necessary address in /etc/hosts file
+# of the client.
+# Example:
+# NFS_CLIENT_LIST="$NFS_CLIENT_LIST mitra,lovejoy-test,/mnt1"
+# IP address of test network lovejoy-test must already be defined
+# in /etc/hosts file of mitra.
+#
+
+#NFS_CLIENT_LIST=
+#NFS_CLIENT_LIST="$NFS_CLIENT_LIST denver,lovejoy-test,/mnt1"
+#NFS_CLIENT_LIST="$NFS_CLIENT_LIST elmhurst,lovejoy-test,/mnt1"
+
+#
+# NFS client mount options
+#
+#CLIENT_MNTOPT="noac,actimeo=0,acdirmax=0,acdirmin=0,acregmax=0,acregmin=0"
+#
+# NFS server mount options
+# do not put -o in the beginning
+# Example:
+# NFS_SERVER_MNTOPT=largefiles
+#
+
+#NFS_SERVER_MNTOPT=
+
+#
+# NFS_TEST_COUNT must contain number of times NFS tests to be executed
+#
+
+#NFS_TEST_COUNT=1
+
+#
+# CDS disk group name and list of Heterogenous Machines
+# The first device in device list will be used for cds 
+#
+
+CDSDG=
+CDS_NODE_AIX=
+CDS_NODE_SunOS=
+CDS_NODE_Linux=
+
+# 
+# List of nodes sharing common storage for CDS
+#
+
+CDSNODELIST="$CDS_NODE_AIX $CDS_NODE_Linux $CDS_NODE_SunOS"
+
+#
+# vxrsh is started on all CFS nodes in NODELIST along with other cfs
+# related daemons
+# vxrsh alone will be started on machines listed in VXRSHNODELIST. 
+# These machines may be heterogenous running Linux, Solaris, SunOS
+#
+
+VXRSHNODELIST="$CDSNODELIST"
